@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Сказки</title>
+    <link rel="shortcut icon" href="/src/favicon.ico" />
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.prod.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header><span>Сказки для детей</span></header>
+      <main class="home">
+        <div v-if="!selectedStory" class="all-story container">
+          <div v-for="(story, index) in stories" :key="index" class="story">
+            <img :src="story.src" alt="Сказка" />
+            <div>
+              <span>{{ story.content }}</span>
+              <button @click="select()">Послушать сказку</button>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="selectedStory" class="tale container">
+          <div class="tale__image">
+            <img :src="currentImage" alt="" />
+          </div>
+          <p v-html="currentText"></p>
+          <audio controls ref="audioPlayer" @timeupdate="updateImage">
+            <source src="/src/teremok/teremok.mp3" type="audio/mp3" />
+          </audio>
+          <button @click="select()">Назад к сказкам</button>
+        </div>
+      </main>
+      <footer><span>МГПУ имени М.Е.Евсевьева</span></footer>
+    </div>
+    <script type="module">
+      const { createApp, reactive, ref } = Vue;
+
+      createApp({
+        setup() {
+          const stories = reactive([
+            {
+              title: "Теремок",
+              src: "/src/teremok.jpg",
+              content:
+                "Теремок — сказка для самых маленьких детей о том, как много зверушек жили в одном домике, пока медведь не влез на его крышу и не раздавил...",
+            },
+            {
+              title: "Колобок",
+              src: "/src/kolobok.jpg",
+              content:
+                "Колобок — сказка о том, как маленький колобок убежал от бабушки и дедушки и встречал разных животных на своём пути...",
+            },
+            {
+              title: "Гуси-Лебеди",
+              src: "/src/gusi.jpg",
+              content:
+                "Колобок — сказка о том, как маленький колобок убежал от бабушки и дедушки и встречал разных животных на своём пути...",
+            },
+            {
+              title: "Рыбак",
+              src: "/src/ribak.jpg",
+              content:
+                "Колобок — сказка о том, как маленький колобок убежал от бабушки и дедушки и встречал разных животных на своём пути...",
+            },
+          ]);
+          const teremok = reactive([
+            {
+              time: 6,
+              image: "/src/teremok/1.webp",
+              text: `Прискакала к терему лягушка-квакушка и спрашивает:<br>
+            — Терем-теремок! Кто в тереме живет?<br>
+            — Я, мышка-норушка! А ты кто?<br>
+            — А я лягушка-квакушка.<br>
+            — Иди ко мне жить! Лягушка прыгнула в теремок. Стали они вдвоем жить.`,
+            },
+            {
+              time: 56,
+              image: "/src/teremok/2.webp",
+              text: `Бежит мимо зайчик-побегайчик. Остановился и спрашивает:<br>
+          — Терем-теремок! Кто в тереме живет?<br>
+          — Я, мышка-норушка!<br>
+          — Я, лягушка-квакушка!<br>
+          — А ты кто?<br>
+          — А я зайчик-побегайчик.<br>
+          — Иди к нам жить! Заяц скок в теремок! Стали они втроем жить.`,
+            },
+            {
+              time: 80,
+              image: "/src/teremok/3.webp",
+              text: `Идет мимо лисичка-сестричка. Постучала в окошко и спрашивает:<br>
+            — Терем-теремок! Кто в тереме живет?<br>
+            — Я, мышка-норушка.<br>
+            — Я, лягушка-квакушка.<br>
+            — Я, зайчик-побегайчик.<br>
+            — А ты кто?<br>
+            — А я лисичка-сестричка.<br>
+            — Иди к нам жить! Забралась лисичка в теремок. Стали они вчетвером жить.`,
+            },
+            {
+              time: 112,
+              image: "/src/teremok/4.webp",
+              text: `Прибежал волчок-серый бочок, заглянул в дверь и спрашивает:<br>
+         — Терем-теремок! Кто в тереме живет?<br>
+         — Я, мышка-норушка.<br>
+         — Я, лягушка-квакушка.<br>
+         — Я, зайчик-побегайчик.<br>
+         — Я, лисичка-сестричка.<br>
+         — А ты кто?<br>
+         — А я волчок-серый бочок.<br>
+         — Иди к нам жить!<br><br>
+         Волк влез в теремок. Стали они впятером жить. Вот они в теремке живут, песни поют.`,
+            },
+            {
+              time: 153,
+              image: "/src/teremok/5.webp",
+              text: `Вдруг идет медведь косолапый. Увидел медведь теремок, услыхал песни, остановился и заревел во всю мочь:<br>
+            — Терем-теремок! Кто в тереме живет?<br>
+            — Я, мышка-норушка.<br>
+            — Я, лягушка-квакушка.<br>
+            — Я, зайчик-побегайчик.<br>
+            — Я, лисичка-сестричка.<br>
+            — Я, волчок-серый бочок.<br>
+            — А ты кто?<br>
+            — А я медведь косолапый.<br>
+            — Иди к нам жить!<br><br>
+
+            Медведь и полез в теремок. Лез-лез, лез-лез — никак не мог влезть и говорит:<br>
+            — А я лучше у вас на крыше буду жить.<br>
+            — Да ты нас раздавишь.<br>
+            — Нет, не раздавлю.<br>
+            — Ну так полезай! Влез медведь на крышу и только уселся — трах! — развалился теремок.`,
+            },
+            {
+              time: 239,
+              image: "/src/teremok/6.webp",
+              text: `Затрещал теремок, упал набок и весь развалился. Еле-еле успели из него выскочить мышка-норушка, лягушка-квакушка, зайчик-побегайчик, лисичка-сестричка, волчок-серый бочок — все целы и невредимы.<br>
+               Принялись они бревна носить, доски пилить — новый теремок строить.<br>
+               Лучше прежнего выстроили!`,
+            },
+          ]);
+
+          const selectedStory = ref(false);
+
+          const select = () => {
+            selectedStory.value = !selectedStory.value;
+          };
+
+          const currentImage = ref("/src/teremok/teremok.jpg");
+          const currentText = ref(
+            "Стоит в поле теремок. Бежит мимо мышка-норушка..."
+          );
+
+          const updateImage = () => {
+            const audio = document.querySelector("audio");
+            const currentTime = audio.currentTime;
+
+            teremok.forEach((timing) => {
+              if (
+                currentTime >= timing.time &&
+                currentImage.value !== timing.image
+              ) {
+                currentImage.value = timing.image;
+                currentText.value = timing.text;
+              }
+            });
+          };
+
+          return {
+            stories,
+            selectedStory,
+            select,
+            updateImage,
+            currentImage,
+            currentText,
+          };
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>
